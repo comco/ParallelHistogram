@@ -58,7 +58,7 @@ public class GUIExecutor extends Executor {
 		// output filename
 		{
 			panel.add(new JLabel("output filename: "));
-			outputFilenameField = new JTextField(state.getOutputFilename());
+			outputFilenameField = new JTextField(state.getHistogramFilename());
 			outputFilenameField.addActionListener(this.new OutputFilenameActionListener());
 			panel.add(outputFilenameField);
 		}
@@ -119,7 +119,7 @@ public class GUIExecutor extends Executor {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			state.setOutputFilename(outputFilenameField.getText());
+			state.setHistogramFilename(outputFilenameField.getText());
 		}
 
 	}

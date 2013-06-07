@@ -63,7 +63,7 @@ public class Program {
 		if (cmd.hasOption('o')) {
 			String outputFilename = cmd.getOptionValue('o');
 			LOGGER.log(Level.FINE, "output file name is: " + outputFilename);
-			state.setOutputFilename(outputFilename);
+			state.setHistogramFilename(outputFilename);
 		}
 		
 		int numThreads = 1;

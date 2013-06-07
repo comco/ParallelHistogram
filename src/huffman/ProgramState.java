@@ -9,13 +9,27 @@ public class ProgramState {
 	static final Logger LOGGER = Logger.getLogger("huffman");
 	
 	private String inputFilename;
-	private String outputFilename;
+	private String histogramFilename;
+	private String encodedFilename;
 	private int	numThreads;
 	private HistogramAlgorithm algorithm;
 
 	private byte[] data;
 	private int[] histogram;
-
+	private HuffmanCompressor compressor;
+	
+	public String getEncodedFilename() {
+		return encodedFilename;
+	}
+	public void setEncodedFilename(String encodedFilename) {
+		this.encodedFilename = encodedFilename;
+	}
+	public HuffmanCompressor getCompressor() {
+		return compressor;
+	}
+	public void setCompressor(HuffmanCompressor compressor) {
+		this.compressor = compressor;
+	}
 	public String getInputFilename() {
 		return inputFilename;
 	}
@@ -23,12 +37,12 @@ public class ProgramState {
 		LOGGER.log(Level.FINER, "setting input file name to: {0}", inputFileName);
 		this.inputFilename = inputFileName;
 	}
-	public String getOutputFilename() {
-		return outputFilename;
+	public String getHistogramFilename() {
+		return histogramFilename;
 	}
-	public void setOutputFilename(String outputFileName) {
+	public void setHistogramFilename(String outputFileName) {
 		LOGGER.log(Level.FINER, "setting input file name to: {0}", outputFileName);
-		this.outputFilename = outputFileName;
+		this.histogramFilename = outputFileName;
 	}
 	public int getNumThreads() {
 		return numThreads;

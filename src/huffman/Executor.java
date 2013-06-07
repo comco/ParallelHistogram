@@ -44,10 +44,10 @@ public abstract class Executor {
 	
 	protected void handleResult() {
 		// write the histogram to an output file
-		if (state.getOutputFilename() != null) {
+		if (state.getHistogramFilename() != null) {
 			try {
 				BufferedWriter writer = new BufferedWriter(new FileWriter(
-						state.getOutputFilename()));
+						state.getHistogramFilename()));
 				for (int i = 0; i < state.getHistogram().length; ++i) {
 					writer.write(Integer.toString(state.getHistogram()[i]));
 					writer.newLine();
