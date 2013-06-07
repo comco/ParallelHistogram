@@ -2,8 +2,11 @@ package huffman.computers;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FullyParallelHistogramComputer extends HistogramComputer {
+	static final Logger LOGGER = Logger.getLogger("huffman");
 	static final int NUM_CHARS = 256;
 	
 	final int numThreads;
@@ -16,13 +19,14 @@ public class FullyParallelHistogramComputer extends HistogramComputer {
 	final CyclicBarrier[] reduceLevelBarriers;
 	
 	public FullyParallelHistogramComputer(final int numThreads, final byte[] data) {
-		System.out.format("Creating a ParallelHistogram object for %d threads", numThreads);
+		LOGGER.log(Level.FINER, String.format("creating a FullyParallelHistogramComputer object for %d threads", numThreads));
+		
 		this.numThreads = numThreads;
 		this.data = data;
 		this.histogramBlocks = new int[numThreads][NUM_CHARS];
 		
 		// initialize threads
-		System.out.println("Initializing blocks...");
+		LOGGER.log(Level.FINER, "initializing blocks...");
 		threads = new Thread[numThreads];
 		int dataOffset = 0;
 		for (int id = 0; id < numThreads; ++id) {
@@ -32,7 +36,7 @@ public class FullyParallelHistogramComputer extends HistogramComputer {
 		}
 		
 		// initialize barriers
-		System.out.println("Initializing barriers...");
+		LOGGER.log(Level.FINER, "initializing barriers...");
 		histogramBlockBarrier = new CyclicBarrier(numThreads);
 		reduceLevelBarriers = new CyclicBarrier[1 + level(data.length)];
 		for (int i = 0; i <= level(data.length); ++i) {
@@ -43,19 +47,18 @@ public class FullyParallelHistogramComputer extends HistogramComputer {
 	@Override
 	public int[] compute() {
 		try {
-			System.out.println("Starting threads...");
+			LOGGER.log(Level.FINER, "starting threads...");
 			for (int id = 0; id < numThreads; ++id) {
 				threads[id].start();
 			}
-			System.out.println("Waiting for the threads to finish...");
+			LOGGER.log(Level.FINER, "waiting for the threads to finish...");
 			for (int id = 0; id < numThreads; ++id) {
 					threads[id].join();
 			}
 			
-			System.out.println("Threads have finished.");
+			LOGGER.log(Level.FINER, "all hreads have finished.");
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "thread execution has gone wrong");
 		}
 		return histogramBlocks[0];
 	}
@@ -130,13 +133,16 @@ public class FullyParallelHistogramComputer extends HistogramComputer {
 		}
 	}
 	
+	/**
+	 * Represents the job each thread has to perform.
+	 */
 	class HistogramJob implements Runnable {
 		final int id;
 		final int dataOffset;
 		final int dataSize;
 		
 		public HistogramJob(final int id, final int dataOffset, final int dataSize) {
-			System.out.format("Creating histogram job with id=%d, dataOffset=%d, dataSize=%d\n", id, dataOffset, dataSize);
+			LOGGER.log(Level.FINER, String.format("creating histogram job with id=%d, dataOffset=%d, dataSize=%d\n", id, dataOffset, dataSize));
 			this.id = id;
 			this.dataOffset = dataOffset;
 			this.dataSize = dataSize;
@@ -154,7 +160,7 @@ public class FullyParallelHistogramComputer extends HistogramComputer {
 		@Override
 		public void run() {
 			try {
-				System.out.format("%d: Thread started; computing histogram block...\n", id);
+				LOGGER.log(Level.FINER, String.format("%d: thread started; computing histogram block...\n", id));
 				// compute the histogram block
 				for (int i = 0; i < dataSize; ++i) {
 					byte b = getDataByteAt(i);
@@ -162,26 +168,25 @@ public class FullyParallelHistogramComputer extends HistogramComputer {
 				}
 				
 				// wait for all threads to compute its results
-				System.out.format("%d: Histogram block computed; got to the histogramBlockBarrier...\n", id);
+				LOGGER.log(Level.FINER, String.format("%d: histogram block computed; got to the histogramBlockBarrier...\n", id));
 				histogramBlockBarrier.await();
 				
-				System.out.format("%d: Got after the histogram block barrier.\n", id);
+				LOGGER.log(Level.FINER, String.format("%d: got after the histogram block barrier.\n", id));
 				int step = 1;
 				int level = 0;
 				while (step < data.length) {
 					if (atLevel(level, id)) {
-						System.out.format("%d: at level %d\n", id, level);
+						LOGGER.log(Level.FINER, String.format("%d: at level %d\n", id, level));
 						mergeHistogramBlocks(id, id - step);
 					}
-					System.out.format("%d: waiting at level barrier %d\n", id, level);
-					//reduceLevelBarriers[level].await();
+					LOGGER.log(Level.FINER, String.format("%d: waiting at level barrier %d\n", id, level));
+					reduceLevelBarriers[level].await();
 					step *= 2;
 					++level;
 				}
-				System.out.format("%d: At the end.\n", id);
+				LOGGER.log(Level.FINER, String.format("%d: at the end.\n", id));
 			} catch (InterruptedException | BrokenBarrierException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, String.format("%d: something went wrong during processing", id));
 			}
 		}
 	}

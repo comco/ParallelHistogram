@@ -1,6 +1,5 @@
 package huffman.computers;
 
-import huffman.HistogramAlgorithm;
 
 /**
  * Interface representing a particular histogram computation algorithm.
@@ -8,20 +7,26 @@ import huffman.HistogramAlgorithm;
 public abstract class HistogramComputer {
 	/**
 	 * Performs the histogram computation.
+	 * 
 	 * @return
 	 */
-	abstract int[] compute();
-	
-	public static HistogramComputer createComputer(HistogramAlgorithm algorithm, final int numThreads, final byte[] data) {
+	public abstract int[] compute();
+
+	public static HistogramComputer createComputer(
+			HistogramAlgorithm algorithm, final int numThreads,
+			final byte[] data) {
 		HistogramComputer computer;
 		switch (algorithm) {
-		case FULLY_PARALLEL: 
-			//computer = new ParallelHistogram(numThreads, data);
+		case FULLY_PARALLEL:
+			computer = new FullyParallelHistogramComputer(numThreads, data);
 			break;
 		case FISRT_STEP_PARALLEL:
-			//com
+			computer = new FirstStepParallelHistogramComputer(numThreads, data);
+			break;
+		default:
+			computer = new FullyParallelHistogramComputer(numThreads, data);
 		}
-		
-		return null;
+
+		return computer;
 	}
 }
