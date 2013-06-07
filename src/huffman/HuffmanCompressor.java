@@ -1,15 +1,16 @@
 package huffman;
 
+import java.io.File;
+import java.io.IOException;
+
 public class HuffmanCompressor {
 	public HuffmanCompressor(int[] histogram) {
 		
 	}
 	
-	public byte[] encode(final byte[] data) {
-		return null;
+	public void encode(File original, File encoded) throws IOException {
 	}
 	
-	public byte[] decode(final byte[] data) {
-		return null;
+	public void decode(File encoded, File original) throws IOException {
 	}
 }
