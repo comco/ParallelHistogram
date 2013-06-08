@@ -16,10 +16,11 @@ public abstract class Executor {
 	static final Logger LOGGER = Logger.getLogger("huffman");
 	
 	ProgramState state;
-	
+	long startTime;
 	public void execute() {
 		try {
 			readFile();
+			startTime = System.currentTimeMillis();
 			handleResult();
 		} catch (FileNotFoundException e) {
 			LOGGER.log(Level.SEVERE, "input file not found");
@@ -29,10 +30,10 @@ public abstract class Executor {
 	}
 	
 	protected void readFile() throws IOException {
-		LOGGER.log(Level.FINE, "reading input file: {0}", state.getInputFilename());
-		File inputFile = new File(state.getInputFilename());
+		LOGGER.log(Level.FINE, "reading input file: {0}", state.getOriginalFilename());
+		File inputFile = new File(state.getOriginalFilename());
 		state.setData(FileUtils.readFileToByteArray(inputFile));
-
+		
 		LOGGER.log(Level.FINE, "creating computer...");
 		HistogramComputer computer = HistogramComputer.createComputer(
 				state.getAlgorithm(), state.getNumThreads(), state.getData());
@@ -53,6 +54,7 @@ public abstract class Executor {
 					writer.newLine();
 				}
 				writer.close();
+				
 			} catch (IOException e) {
 				LOGGER.log(Level.SEVERE, "could not write output file");
 			}

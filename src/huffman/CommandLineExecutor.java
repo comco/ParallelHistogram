@@ -12,18 +12,6 @@ public class CommandLineExecutor extends Executor {
 		super();
 		this.state = state;
 	}
-	
-	@Override
-	public void execute() {
-		try {
-			readFile();
-			handleResult();
-		} catch (FileNotFoundException e) {
-			LOGGER.log(Level.SEVERE, "input file not found");
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "could not read input file");
-		}
-	}
 
 	@Override
 	protected void handleResult() {

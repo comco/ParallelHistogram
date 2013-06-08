@@ -2,9 +2,14 @@ package huffman;
 
 import huffman.computers.HistogramAlgorithm;
 
+import java.awt.Desktop;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,12 +19,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * GUI interface of the parallel histogram program.
@@ -28,14 +36,18 @@ import javax.swing.event.ChangeListener;
 public class GUIExecutor extends Executor {
 	static final Logger LOGGER = Logger.getLogger("huffman");
 	JFrame frame;
-	JPanel panel;
+	JTabbedPane tabPane;
 
-	JTextField inputFilenameField;
-	JTextField outputFilenameField;
+	JTextField originalFilenameField;
+	JTextField histogramFilenameField;
+	JTextField encodedFilenameField;
+	JTextField decodedFilenameField;
 	
 	JSpinner numThreadsSpinner;
 	JComboBox<HistogramAlgorithm> algorithmCombo;
 	JButton computeButton;
+	JButton encodeButton;
+	JButton decodeButton;
 	
 	public GUIExecutor(ProgramState state) {
 		LOGGER.log(Level.FINE, "creating gui...");
@@ -43,55 +55,17 @@ public class GUIExecutor extends Executor {
 		
 		frame = new JFrame("Parallel Histogram");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		panel = new JPanel(new GridLayout(5, 2));
-		
-		// input filename
+	
+		JPanel histogramPanel = new HistogramPanel(this, state);
+		ProgramState comprState = new ProgramState();
+		JPanel compressionPanel = new CompressionPanel(this, comprState);
+		tabPane = new JTabbedPane();
 		{
-			panel.add(new JLabel("input filename: "));
-			
-			inputFilenameField = new JTextField(state.getInputFilename());
-			inputFilenameField.addActionListener(this.new InputFilenameActionListener());
-			panel.add(inputFilenameField);
+			tabPane.addTab("Histogram", null, histogramPanel, "Create histogram");
+			tabPane.addTab("Compress", null, compressionPanel, "Encode and decode file");
 		}
 		
-		// output filename
-		{
-			panel.add(new JLabel("output filename: "));
-			outputFilenameField = new JTextField(state.getHistogramFilename());
-			outputFilenameField.addActionListener(this.new OutputFilenameActionListener());
-			panel.add(outputFilenameField);
-		}
-		
-		// number of threads
-		{
-			JLabel numThreadsLabel = new JLabel("number of threads: ");
-			panel.add(numThreadsLabel);
-			int value = state.getNumThreads();
-			SpinnerModel model = new SpinnerNumberModel(value, 1, 20, 1);
-			numThreadsSpinner = new JSpinner(model);
-			numThreadsSpinner.addChangeListener(this.new NumThreadsChangeListener());
-			panel.add(numThreadsSpinner);
-		}
-		
-		// algorithm
-		{
-			panel.add(new JLabel("algorithm: "));
-			algorithmCombo = new JComboBox<>(HistogramAlgorithm.values());
-			algorithmCombo.setSelectedItem(state.getAlgorithm());
-			algorithmCombo.addActionListener(this.new AlgorithmActionListener());
-			panel.add(algorithmCombo);
-		}
-		
-		// compute button
-		{
-			panel.add(new JLabel());
-			computeButton = new JButton("compute histogram");
-			computeButton.addActionListener(this.new ComputeActionListener());
-			panel.add(computeButton);
-		}
-		
-		frame.add(panel);
+		frame.add(tabPane);
 		frame.pack();
 	}
 	
@@ -101,53 +75,11 @@ public class GUIExecutor extends Executor {
 	
 	protected void handleResult() {
 		// show a message
-		JOptionPane.showMessageDialog(null, "Histogram computed.");
-		super.handleResult();
-	}
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		String mess =  "Histogram computed. The elapsed time is " + estimatedTime + " mililiseconds.";
+		JOptionPane.showMessageDialog(null, mess);
 	
-	// Listener classes
-	private class InputFilenameActionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			state.setInputFilename(inputFilenameField.getText());
-		}
-
-	}
-	
-	private class OutputFilenameActionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			state.setHistogramFilename(outputFilenameField.getText());
-		}
-
-	}
-	
-	private class NumThreadsChangeListener implements ChangeListener {
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			state.setNumThreads((Integer) numThreadsSpinner.getValue());
-		}
+		super.handleResult();	
 		
-	}
-	
-	private class AlgorithmActionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			state.setAlgorithm((HistogramAlgorithm) algorithmCombo.getSelectedItem());
-		}
-		
-	}
-	
-	private class ComputeActionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			LOGGER.log(Level.FINE, "computing histogram...");
-			execute();
-		}
 	}
 }

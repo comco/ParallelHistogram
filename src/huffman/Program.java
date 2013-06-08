@@ -57,7 +57,7 @@ public class Program {
 		if (cmd.hasOption('f')) {
 			String inputFilename = cmd.getOptionValue('f');
 			LOGGER.log(Level.FINE, "input file name is: " + inputFilename);
-			state.setInputFilename(inputFilename);
+			state.setOriginalFilename(inputFilename);
 		}
 		
 		if (cmd.hasOption('o')) {
