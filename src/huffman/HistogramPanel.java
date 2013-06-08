@@ -34,7 +34,7 @@ public class HistogramPanel extends JPanel{
 	JTextField histogramFilenameField;
 	
 	JSpinner numThreadsSpinner;
-	JComboBox<HistogramComputerOption> algorithmCombo;
+	JComboBox algorithmCombo;
 	JButton computeButton;
 	
 	public HistogramPanel(GUIExecutor executor, ProgramState state) {
@@ -74,7 +74,7 @@ public class HistogramPanel extends JPanel{
 		// algorithm
 		{
 			this.add(new JLabel("algorithm: "));
-			algorithmCombo = new JComboBox<>(HistogramComputerOption.values());
+			algorithmCombo = new JComboBox(HistogramComputerOption.values());
 			algorithmCombo.setSelectedItem(state.getAlgorithm());
 			algorithmCombo.addActionListener(this.new AlgorithmActionListener());
 			this.add(algorithmCombo);

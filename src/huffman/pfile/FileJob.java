@@ -36,10 +36,10 @@ public abstract class FileJob implements Runnable {
 				processed += split.blockSize;
 			}
 		} catch (FileNotFoundException e) {
-			String msg = String.format("%s: file (%s) not found", threadPrompt(), split.file.toPath());
+			String msg = String.format("%s: file (%s) not found", threadPrompt(), split.file.getPath());
 			LOGGER.severe(msg);
 		} catch (IOException e) {
-			String msg = String.format("%s: can't process file (%s)", threadPrompt(), split.file.toPath());
+			String msg = String.format("%s: can't process file (%s)", threadPrompt(), split.file.getPath());
 			LOGGER.severe(msg);
 		} finally {
 			if (file != null) {

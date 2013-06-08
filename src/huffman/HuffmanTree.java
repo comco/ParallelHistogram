@@ -83,7 +83,7 @@ public class HuffmanTree {
 
 		@Override
 		public int compareTo(Node o) {
-			return Long.compare(this.frequency, o.frequency);
+			return Long.signum(this.frequency - o.frequency);
 		}
 
 		/**

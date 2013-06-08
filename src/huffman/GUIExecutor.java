@@ -1,7 +1,5 @@
 package huffman;
 
-import huffman.computers.HistogramComputerOption;
-
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -28,7 +26,7 @@ public class GUIExecutor extends Executor {
 	JTextField decodedFilenameField;
 	
 	JSpinner numThreadsSpinner;
-	JComboBox<HistogramComputerOption> algorithmCombo;
+	JComboBox algorithmCombo;
 	JButton computeButton;
 	JButton encodeButton;
 	JButton decodeButton;

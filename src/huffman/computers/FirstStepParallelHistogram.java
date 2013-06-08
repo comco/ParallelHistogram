@@ -21,7 +21,7 @@ public class FirstStepParallelHistogram extends HistogramComputer implements Fil
 	
 	public long[] computeHistogram(FileSplit split) throws InterruptedException {
 		LOGGER.fine(String.format("computing histogram of file (%s)",
-				split.file.toPath()));
+				split.file.getPath()));
 
 		setNumThreads(split.numThreads);
 		ParallelFileProcessor processor = new ParallelFileProcessor(split, this);
@@ -36,7 +36,7 @@ public class FirstStepParallelHistogram extends HistogramComputer implements Fil
 
 		LOGGER.fine(String
 				.format("histogram computation for file (%s) finished for %d milliseconds",
-						split.file.toPath(), elapsedTime / 1000 / 1000));
+						split.file.getPath(), elapsedTime / 1000 / 1000));
 		return histogram;
 	}
 	
