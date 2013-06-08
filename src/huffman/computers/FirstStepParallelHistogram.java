@@ -9,7 +9,7 @@ import huffman.pfile.FileJobConstructor;
 import huffman.pfile.FileSplit;
 import huffman.pfile.ParallelFileProcessor;
 
-public class ParallelHistogram implements FileJobConstructor {
+public class FirstStepParallelHistogram extends HistogramComputer implements FileJobConstructor {
 	static final Logger LOGGER = Constants.LOGGER;
 	
 	int numThreads;
@@ -37,7 +37,7 @@ public class ParallelHistogram implements FileJobConstructor {
 
 		LOGGER.fine(String
 				.format("histogram computation for file (%s) finished for %d milliseconds",
-						split.file.toPath(), elapsedTime / 1000));
+						split.file.toPath(), elapsedTime / 1000 / 1000));
 		return histogram;
 	}
 	
@@ -70,7 +70,7 @@ public class ParallelHistogram implements FileJobConstructor {
 	public static void main(String[] args) throws InterruptedException {
 		File file = new File("C:/data/input.txt");
 		FileSplit split = new FileSplit(file, "r", 2);
-		ParallelHistogram histc = new ParallelHistogram();
+		FirstStepParallelHistogram histc = new FirstStepParallelHistogram();
 		long[] hist = histc.computeHistogram(split);
 		System.out.println("histogram: ");
 		printHist(hist);

@@ -1,6 +1,5 @@
 package huffman;
 
-import java.awt.Desktop;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -22,7 +20,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class CompressionPanel extends JPanel{
-static final Logger LOGGER = Logger.getLogger("huffman");
+	private static final long serialVersionUID = 1L;
+
+	static final Logger LOGGER = Logger.getLogger("huffman");
 	
 	ProgramState state;
 	GUIExecutor executor;
@@ -138,7 +138,7 @@ static final Logger LOGGER = Logger.getLogger("huffman");
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			LOGGER.log(Level.FINE, "encoding file...");
+			LOGGER.fine("encoding file...");
 			long startTime = System.currentTimeMillis();
 			HuffmanCompressor compressor = new HuffmanCompressor(state.getHistogram());
 			
@@ -161,7 +161,7 @@ static final Logger LOGGER = Logger.getLogger("huffman");
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			LOGGER.log(Level.FINE, "decoding file...");
+			LOGGER.fine("decoding file...");
 			long startTime = System.currentTimeMillis();
 			HuffmanCompressor compressor = new HuffmanCompressor(state.getHistogram());
 			

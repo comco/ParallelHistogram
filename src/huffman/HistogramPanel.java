@@ -1,6 +1,6 @@
 package huffman;
 
-import huffman.computers.HistogramAlgorithm;
+import huffman.computers.HistogramComputerOption;
 
 import java.awt.Desktop;
 import java.awt.GridLayout;
@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -24,6 +23,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class HistogramPanel extends JPanel{
+	private static final long serialVersionUID = 1L;
+
 	static final Logger LOGGER = Logger.getLogger("huffman");
 	
 	ProgramState state;
@@ -33,7 +34,7 @@ public class HistogramPanel extends JPanel{
 	JTextField histogramFilenameField;
 	
 	JSpinner numThreadsSpinner;
-	JComboBox<HistogramAlgorithm> algorithmCombo;
+	JComboBox<HistogramComputerOption> algorithmCombo;
 	JButton computeButton;
 	
 	public HistogramPanel(GUIExecutor executor, ProgramState state) {
@@ -73,7 +74,7 @@ public class HistogramPanel extends JPanel{
 		// algorithm
 		{
 			this.add(new JLabel("algorithm: "));
-			algorithmCombo = new JComboBox<>(HistogramAlgorithm.values());
+			algorithmCombo = new JComboBox<>(HistogramComputerOption.values());
 			algorithmCombo.setSelectedItem(state.getAlgorithm());
 			algorithmCombo.addActionListener(this.new AlgorithmActionListener());
 			this.add(algorithmCombo);
@@ -100,7 +101,7 @@ public class HistogramPanel extends JPanel{
                 
                 String path = state.getHistogramFilename();
             	File file = new File(path);
-            	LOGGER.log(Level.FINE, "opening histogram file...");
+            	LOGGER.fine("opening histogram file...");
             	desktop.open(file);
             }    	    
         } catch (IOException e) {
@@ -140,7 +141,7 @@ public class HistogramPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			state.setAlgorithm((HistogramAlgorithm) algorithmCombo.getSelectedItem());
+			state.setAlgorithm((HistogramComputerOption) algorithmCombo.getSelectedItem());
 		}
 		
 	}
@@ -158,7 +159,7 @@ public class HistogramPanel extends JPanel{
 				JOptionPane.showMessageDialog(null, "Please, fill the path to histogram file.");
 			}
 			else {
-				LOGGER.log(Level.FINE, "computing histogram...");
+				LOGGER.fine("computing histogram...");
 				
 				executor.execute();
 				openHistogramFile();

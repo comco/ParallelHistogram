@@ -1,6 +1,7 @@
 package huffman;
 
 import huffman.computers.HistogramComputer;
+import huffman.pfile.FileSplit;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,7 +21,7 @@ public abstract class Executor {
 	public void execute() {
 		try {
 			readFile();
-			startTime = System.currentTimeMillis();
+			startTime = System.nanoTime();
 			handleResult();
 		} catch (FileNotFoundException e) {
 			LOGGER.log(Level.SEVERE, "input file not found");
@@ -30,17 +31,23 @@ public abstract class Executor {
 	}
 	
 	protected void readFile() throws IOException {
-		LOGGER.log(Level.FINE, "reading input file: {0}", state.getOriginalFilename());
+		LOGGER.fine(String.format("reading input file: (%s)", state.getOriginalFilename()));
 		File inputFile = new File(state.getOriginalFilename());
 		state.setData(FileUtils.readFileToByteArray(inputFile));
 		
-		LOGGER.log(Level.FINE, "creating computer...");
+		LOGGER.fine("creating computer...");
 		HistogramComputer computer = HistogramComputer.createComputer(
 				state.getAlgorithm(), state.getNumThreads(), state.getData());
 
-		LOGGER.log(Level.FINE, "computing histogram...");
-		state.setHistogram(computer.compute());
-		LOGGER.log(Level.FINE, "histogram computed.");
+		LOGGER.fine("computing histogram...");
+		File decoded = new File(state.getOriginalFilename());
+		FileSplit split = new FileSplit(decoded, "r", state.getNumThreads());
+		try {
+			state.setHistogram(computer.computeHistogram(split));
+			LOGGER.fine("histogram computed.");
+		} catch (InterruptedException e) {
+			LOGGER.severe("histogram computation failed");
+		}
 	}
 	
 	protected void handleResult() {
@@ -50,7 +57,7 @@ public abstract class Executor {
 				BufferedWriter writer = new BufferedWriter(new FileWriter(
 						state.getHistogramFilename()));
 				for (int i = 0; i < state.getHistogram().length; ++i) {
-					writer.write(Integer.toString(state.getHistogram()[i]));
+					writer.write(Long.toString(state.getHistogram()[i]));
 					writer.newLine();
 				}
 				writer.close();

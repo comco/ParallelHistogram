@@ -4,14 +4,13 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import huffman.computers.HistogramAlgorithm;
+import huffman.computers.HistogramComputerOption;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -56,13 +55,13 @@ public class Program {
 		
 		if (cmd.hasOption('f')) {
 			String inputFilename = cmd.getOptionValue('f');
-			LOGGER.log(Level.FINE, "input file name is: " + inputFilename);
+			LOGGER.fine("input file name is: " + inputFilename);
 			state.setOriginalFilename(inputFilename);
 		}
 		
 		if (cmd.hasOption('o')) {
 			String outputFilename = cmd.getOptionValue('o');
-			LOGGER.log(Level.FINE, "output file name is: " + outputFilename);
+			LOGGER.fine("output file name is: " + outputFilename);
 			state.setHistogramFilename(outputFilename);
 		}
 		
@@ -71,15 +70,15 @@ public class Program {
 			String threadsString = cmd.getOptionValue('t');
 			numThreads = Integer.parseInt(threadsString);
 		}
-		LOGGER.log(Level.FINE, "number of threads is: " + numThreads);
+		LOGGER.fine("number of threads is: " + numThreads);
 		state.setNumThreads(numThreads);
 		
 		String algorithmCmd = null;
 		if (cmd.hasOption('a')) {
 			algorithmCmd = cmd.getOptionValue('a');
 		}
-		HistogramAlgorithm algorithm = HistogramAlgorithm.getAlgorithm(algorithmCmd);
-		LOGGER.log(Level.FINE, "algorithm is: " + algorithm.name);
+		HistogramComputerOption algorithm = HistogramComputerOption.getAlgorithm(algorithmCmd);
+		LOGGER.fine("algorithm is: " + algorithm.name);
 		state.setAlgorithm(algorithm);
 		return state;
 	}
@@ -108,7 +107,6 @@ public class Program {
 	 * Builds the command line options structure
 	 * @return
 	 */
-	@SuppressWarnings("static-access")
 	private static void buildOptions() {
 		Option help = new Option("h", "help", false, "help");
 		Option quiet = new Option("q", "quiet", false, "quiet mode");

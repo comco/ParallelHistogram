@@ -3,7 +3,7 @@ package huffman;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import huffman.computers.HistogramAlgorithm;
+import huffman.computers.HistogramComputerOption;
 
 public class ProgramState {
 	static final Logger LOGGER = Logger.getLogger("huffman");
@@ -18,10 +18,10 @@ public class ProgramState {
 	private String decodedFilename;
 
 	private int	numThreads;
-	private HistogramAlgorithm algorithm;
+	private HistogramComputerOption algorithm;
 
 	private byte[] data;
-	private int[] histogram;
+	private long[] histogram;
 	private HuffmanCompressor compressor;
 	
 	public String getDecodedFilename() {
@@ -65,10 +65,10 @@ public class ProgramState {
 		LOGGER.log(Level.FINER, "setting number of threads to: {0}", numThreads);
 		this.numThreads = numThreads;
 	}
-	public HistogramAlgorithm getAlgorithm() {
+	public HistogramComputerOption getAlgorithm() {
 		return algorithm;
 	}
-	public void setAlgorithm(HistogramAlgorithm algorithm) {
+	public void setAlgorithm(HistogramComputerOption algorithm) {
 		LOGGER.log(Level.FINER, "setting algorithm to: {0}", algorithm);
 		this.algorithm = algorithm;
 	}
@@ -78,10 +78,10 @@ public class ProgramState {
 	public void setData(byte[] data) {
 		this.data = data;
 	}
-	public int[] getHistogram() {
+	public long[] getHistogram() {
 		return histogram;
 	}
-	public void setHistogram(int[] histogram) {
+	public void setHistogram(long[] histogram) {
 		this.histogram = histogram;
 	}
 }

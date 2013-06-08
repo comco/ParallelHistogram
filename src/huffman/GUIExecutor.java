@@ -1,33 +1,17 @@
 package huffman;
 
-import huffman.computers.HistogramAlgorithm;
+import huffman.computers.HistogramComputerOption;
 
-import java.awt.Desktop;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * GUI interface of the parallel histogram program.
@@ -44,13 +28,13 @@ public class GUIExecutor extends Executor {
 	JTextField decodedFilenameField;
 	
 	JSpinner numThreadsSpinner;
-	JComboBox<HistogramAlgorithm> algorithmCombo;
+	JComboBox<HistogramComputerOption> algorithmCombo;
 	JButton computeButton;
 	JButton encodeButton;
 	JButton decodeButton;
 	
 	public GUIExecutor(ProgramState state) {
-		LOGGER.log(Level.FINE, "creating gui...");
+		LOGGER.fine("creating gui...");
 		this.state = state;
 		
 		frame = new JFrame("Parallel Histogram");
@@ -75,8 +59,9 @@ public class GUIExecutor extends Executor {
 	
 	protected void handleResult() {
 		// show a message
-		long estimatedTime = System.currentTimeMillis() - startTime;
-		String mess =  "Histogram computed. The elapsed time is " + estimatedTime + " mililiseconds.";
+		long estimatedTimeNano = System.nanoTime() - startTime;
+		long estimatedTimeMilli = estimatedTimeNano / 1000 / 1000;
+		String mess =  "Histogram computed. The elapsed time is " + estimatedTimeMilli + " mililiseconds.";
 		JOptionPane.showMessageDialog(null, mess);
 	
 		super.handleResult();	
