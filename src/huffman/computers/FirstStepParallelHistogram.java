@@ -52,8 +52,8 @@ public class FirstStepParallelHistogram extends HistogramComputer implements Fil
 		}
 
 		@Override
-		protected void processBlock(byte[] block) {
-			for (int i = 0; i < split.blockSize; ++i) {
+		protected void processBlock(byte[] block, long size) {
+			for (int i = 0; i < size; ++i) {
 				byte b = block[i];
 				++blockHistograms[threadId][b & 0xff];
 			}

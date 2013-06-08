@@ -18,7 +18,7 @@ import org.apache.commons.cli.ParseException;
  * The program class
  */
 public class Program {
-	static final Logger LOGGER = Logger.getLogger("huffman");
+	static final Logger LOGGER = Constants.LOGGER;
 	
 	static Options options;
 	/**

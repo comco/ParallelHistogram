@@ -32,7 +32,7 @@ public abstract class FileJob implements Runnable {
 			long processed = 0;
 			while (processed < size) {
 				file.read(block);
-				processBlock(block);
+				processBlock(block, Math.min(split.blockSize, size - processed));
 				processed += split.blockSize;
 			}
 		} catch (FileNotFoundException e) {
@@ -52,7 +52,7 @@ public abstract class FileJob implements Runnable {
 		}
 	}
 	
-	protected abstract void processBlock(byte[] block);
+	protected abstract void processBlock(byte[] block, long size);
 	
 	public String threadPrompt() {
 		return String.format("[thread %d]", threadId);

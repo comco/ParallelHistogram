@@ -46,7 +46,7 @@ public class HuffmanCompressor {
 			for (int i = 0; i < code.size; ++i) {
 				writeBit(offset, code.bitset.get(i));
 				++offset;
-				if (offset >= 8 * code.size) {
+				if (offset >= 8 * outputBuffer.length) {
 					output.write(outputBuffer);
 					Arrays.fill(outputBuffer, (byte) 0);
 					offset = 0;
@@ -123,7 +123,7 @@ public class HuffmanCompressor {
 		 * @return
 		 */
 		public long getActualSize() {
-			return (length - 1) * 8 + stride;
+			return (length - 2) * 8 + stride;
 		}
 	}
 	
@@ -133,14 +133,14 @@ public class HuffmanCompressor {
 		
 		InputReader reader = new InputReader(input);
 		long actualSize = reader.getActualSize();
-		
+		System.out.println("actual size: " + actualSize);
 		Node current = tree.root;
 		for (long i = 0; i < actualSize; ++i) {
 			int t = reader.getBit();
 			if (t == 1) {
-				current = ((InternalNode) current).left;
-			} else {
 				current = ((InternalNode) current).right;
+			} else {
+				current = ((InternalNode) current).left;
 			}
 			if (current instanceof LeafNode) {
 				LeafNode leaf = (LeafNode) current;
@@ -151,4 +151,17 @@ public class HuffmanCompressor {
 		input.close();
 		output.close();
 	}
+//	public static void encode(long[] histogram) throws IOException {
+//		File inp = new File("c:/data/input.txt");
+//		File out = new File("c:/data/encod.dat");
+//		new HuffmanCompressor(histogram).encode(inp, out);
+//		File lst = new File("c:/data/result.txt");
+//		new HuffmanCompressor(histogram).decode(out, lst);
+//	}
+//	
+//	public static void main(String[] args) throws IOException {
+//		long[] histogram = new long[Constants.NUM_CHARS];
+//		histogram[97] = 1;
+//		encode(histogram);
+//	}
 }

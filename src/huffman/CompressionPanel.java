@@ -185,10 +185,11 @@ public class CompressionPanel extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			LOGGER.fine("decoding file...");
 			long startTime = System.currentTimeMillis();
-			HuffmanCompressor compressor = new HuffmanCompressor(state.getHistogram());
+			long[] histogram = readHistogram(state.getHistogramFilename());
+			HuffmanCompressor compressor = new HuffmanCompressor(histogram);
 			
 			File encodedFile = new File(state.getEncodedFilename());
-			File decodedFile = new File(state.getDecodedFilename());
+			File decodedFile = new File(state.getOriginalFilename());
 			
 			try{
 				compressor.decode(encodedFile, decodedFile);
