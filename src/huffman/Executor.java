@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
-
 public abstract class Executor {
 	static final Logger LOGGER = Logger.getLogger("huffman");
 	
@@ -21,7 +19,7 @@ public abstract class Executor {
 	public void execute() {
 		try {
 			readFile();
-			startTime = System.nanoTime();
+			
 			handleResult();
 		} catch (FileNotFoundException e) {
 			LOGGER.log(Level.SEVERE, "input file not found");
@@ -32,14 +30,15 @@ public abstract class Executor {
 	
 	protected void readFile() throws IOException {
 		LOGGER.fine(String.format("reading input file: (%s)", state.getOriginalFilename()));
-		File inputFile = new File(state.getOriginalFilename());
-		state.setData(FileUtils.readFileToByteArray(inputFile));
+		//File inputFile = new File(state.getOriginalFilename());
+		//state.setData(FileUtils.readFileToByteArray(inputFile));
 		
 		LOGGER.fine("creating computer...");
 		HistogramComputer computer = HistogramComputer.createComputer(
 				state.getAlgorithm(), state.getNumThreads(), state.getData());
-
+		
 		LOGGER.fine("computing histogram...");
+		startTime = System.nanoTime();
 		File decoded = new File(state.getOriginalFilename());
 		FileSplit split = new FileSplit(decoded, "r", state.getNumThreads());
 		try {

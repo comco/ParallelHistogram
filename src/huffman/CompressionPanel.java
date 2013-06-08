@@ -3,7 +3,9 @@ package huffman;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,6 +97,25 @@ public class CompressionPanel extends JPanel{
 
 	}
 	
+	private long[] readHistogram(String histogramFilename) {
+		long[] histogram = new long[Constants.NUM_CHARS];
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(
+					histogramFilename));
+			String line;
+			int i = 0;
+			while ((line = reader.readLine()) != null) {
+				histogram[i] = Long.parseLong(line);
+				++i;
+			}
+			reader.close();
+		} catch (IOException e) {
+			LOGGER.severe("cannot open histogram file");
+		}
+		
+		return histogram;
+	}
+
 	// Listener classes
 	private class OriginalFilenameActionListener implements ActionListener {
 
@@ -140,7 +161,8 @@ public class CompressionPanel extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			LOGGER.fine("encoding file...");
 			long startTime = System.currentTimeMillis();
-			HuffmanCompressor compressor = new HuffmanCompressor(state.getHistogram());
+			long[] histogram = readHistogram(state.getHistogramFilename());
+			HuffmanCompressor compressor = new HuffmanCompressor(histogram);
 			
 			File originalFile = new File(state.getOriginalFilename());
 			File encodedFile = new File(state.getEncodedFilename());

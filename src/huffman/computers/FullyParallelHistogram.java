@@ -26,8 +26,8 @@ public class FullyParallelHistogram extends HistogramComputer implements
 		this.blockHistograms = new long[numThreads][Constants.NUM_CHARS];
 		// initialize barriers
 		blockHistogramBarrier = new CyclicBarrier(numThreads);
-		reduceLevelBarriers = new CyclicBarrier[1 + level(length)];
-		for (int i = 0; i <= level(length); ++i) {
+		reduceLevelBarriers = new CyclicBarrier[1 + level(numThreads)];
+		for (int i = 0; i <= level(numThreads); ++i) {
 			reduceLevelBarriers[i] = new CyclicBarrier(numThreads);
 		}
 	}
@@ -43,17 +43,10 @@ public class FullyParallelHistogram extends HistogramComputer implements
 		ParallelFileProcessor processor = new ParallelFileProcessor(split, this);
 		long elapsedTime = processor.processFile();
 
-		long[] histogram = new long[Constants.NUM_CHARS];
-		for (int i = 0; i < numThreads; ++i) {
-			for (int j = 0; j < Constants.NUM_CHARS; ++j) {
-				histogram[j] += blockHistograms[i][j];
-			}
-		}
-
 		LOGGER.fine(String
 				.format("histogram computation for file (%s) finished for %d milliseconds",
 						split.file.toPath(), elapsedTime / 1000 / 1000));
-		return histogram;
+		return blockHistograms[0].clone();
 	}
 
 	@Override
@@ -70,7 +63,7 @@ public class FullyParallelHistogram extends HistogramComputer implements
 
 		@Override
 		protected void processBlock(byte[] block) {
-			for (int i = 0; i < size; ++i) {
+			for (int i = 0; i < split.blockSize; ++i) {
 				byte b = block[i];
 				++blockHistograms[threadId][b & 0xff];
 			}
@@ -87,6 +80,7 @@ public class FullyParallelHistogram extends HistogramComputer implements
 			try {
 				blockHistogramBarrier.await();
 				threadLogFiner("got after the block histogram barrier\n");
+				System.out.format(">>> %d %d\n", threadId, blockHistograms[threadId][97]);
 				int step = 1;
 				int level = 0;
 				while (step < numThreads) {
@@ -116,8 +110,18 @@ public class FullyParallelHistogram extends HistogramComputer implements
 		}
 
 		private void threadLog(Level level, String format, Object... args) {
-			String msg = threadPrompt() + ":" + String.format(format, args);
+			String msg = threadPrompt() + ": " + String.format(format, args);
 			LOGGER.log(level, msg);
+		}
+
+		void mergeHistogramBlocks(final int from, final int to) {
+			threadLogFiner("merge: %d -> %d\n", from, to);
+			for (int i = 0; i < Constants.NUM_CHARS; ++i) {
+				if (i == 97) {
+					System.out.format("old (%d) from %d to %d\n", threadId, blockHistograms[from][i], blockHistograms[to][i]);
+				}
+				blockHistograms[to][i] += blockHistograms[from][i];
+			}
 		}
 	}
 
@@ -129,10 +133,5 @@ public class FullyParallelHistogram extends HistogramComputer implements
 		return Long.numberOfTrailingZeros(n) == level;
 	}
 
-	void mergeHistogramBlocks(final int from, final int to) {
-		for (int i = 0; i < Constants.NUM_CHARS; ++i) {
-			blockHistograms[to][i] += blockHistograms[from][i];
-		}
-	}
 
 }

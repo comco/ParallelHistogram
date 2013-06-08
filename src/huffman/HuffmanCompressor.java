@@ -76,7 +76,10 @@ public class HuffmanCompressor {
 		byte[] inputBuffer = new byte[CHUNK_SIZE];
 		
 		int readBytes;
+		int chunk = 0;
 		while ((readBytes = input.read(inputBuffer)) > 0) {
+			System.out.println("doing chunk " + chunk);
+			++chunk;
 			for (int i = 0; i < readBytes; ++i) {
 				Code code = codes[inputBuffer[i] & 0xff];
 				writer.writeCode(code);

@@ -1,6 +1,5 @@
 package huffman.computers;
 
-import java.io.File;
 import java.util.logging.Logger;
 
 import huffman.Constants;
@@ -54,25 +53,10 @@ public class FirstStepParallelHistogram extends HistogramComputer implements Fil
 
 		@Override
 		protected void processBlock(byte[] block) {
-			for (int i = 0; i < size; ++i) {
+			for (int i = 0; i < split.blockSize; ++i) {
 				byte b = block[i];
 				++blockHistograms[threadId][b & 0xff];
 			}
 		}
-	}
-	
-	static void printHist(long[] histogram) {
-		for (int i = 0; i < histogram.length; ++i) {
-			System.out.println(histogram[i]);
-		}
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		File file = new File("C:/data/input.txt");
-		FileSplit split = new FileSplit(file, "r", 2);
-		FirstStepParallelHistogram histc = new FirstStepParallelHistogram();
-		long[] hist = histc.computeHistogram(split);
-		System.out.println("histogram: ");
-		printHist(hist);
 	}
 }

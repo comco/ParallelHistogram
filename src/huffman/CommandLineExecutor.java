@@ -14,9 +14,9 @@ public class CommandLineExecutor extends Executor {
 	protected void handleResult() {
 		super.handleResult();
 		// print the histogram on screen
-		for (int i = 0; i < state.getHistogram().length; ++i) {
-			System.out.print(state.getHistogram()[i] + " ");
-		}
-		System.out.println();
+		// print elapsed time
+		long elapsedTimeNano = System.nanoTime() - startTime;
+		long elapsedTimeMilli = elapsedTimeNano / 1000 / 1000;
+		System.out.println("time: " + elapsedTimeMilli);
 	}
 }
