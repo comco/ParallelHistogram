@@ -86,7 +86,7 @@ public class Program {
 	public static void displayHelp() {
 		// automatically generate the help statement
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("java -cp huffman", options );
+		formatter.printHelp("java -jar huffman.jar", options);
 	}
 	
 	private static void initializeLoggger(CommandLine cmd) {

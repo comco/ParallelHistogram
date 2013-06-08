@@ -75,32 +75,31 @@ public class FullyParallelHistogram extends HistogramComputer implements
 			super.run();
 			// wait at histogram block barrier
 			LOGGER.finer(String
-					.format("%s: histogram block computed; got to the histogramBlockBarrier...\n",
+					.format("%s: histogram block computed; got to the histogramBlockBarrier...",
 							threadPrompt()));
 			try {
 				blockHistogramBarrier.await();
-				threadLogFiner("got after the block histogram barrier\n");
-				System.out.format(">>> %d %d\n", threadId, blockHistograms[threadId][97]);
+				threadLogFiner("got after the block histogram barrier");
 				int step = 1;
 				int level = 0;
 				while (step < numThreads) {
 					if (atLevel(level, threadId)) {
-						threadLogFiner("at level %d\n", level);
+						threadLogFiner("at level %d", level);
 						mergeHistogramBlocks(threadId, threadId - step);
 					}
-					threadLogFiner("waiting at level barrier %d\n", level);
+					threadLogFiner("waiting at level barrier %d", level);
 					reduceLevelBarriers[level].await();
 					step *= 2;
 					++level;
 				}
-				threadLogFiner("at the end\n");
+				threadLogFiner("at the end");
 			} catch (InterruptedException e) {
 				LOGGER.severe(String
-						.format("%s: parallel processing interrupted\n",
+						.format("%s: parallel processing interrupted",
 								threadPrompt()));
 			} catch (BrokenBarrierException e) {
 				LOGGER.severe(String
-						.format("%s: parallel processing interrupted\n",
+						.format("%s: parallel processing interrupted",
 								threadPrompt()));
 			}
 		}
@@ -115,11 +114,8 @@ public class FullyParallelHistogram extends HistogramComputer implements
 		}
 
 		void mergeHistogramBlocks(final int from, final int to) {
-			threadLogFiner("merge: %d -> %d\n", from, to);
+			threadLogFiner("merge: %d -> %d", from, to);
 			for (int i = 0; i < Constants.NUM_CHARS; ++i) {
-				if (i == 97) {
-					System.out.format("old (%d) from %d to %d\n", threadId, blockHistograms[from][i], blockHistograms[to][i]);
-				}
 				blockHistograms[to][i] += blockHistograms[from][i];
 			}
 		}
